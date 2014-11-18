@@ -25,7 +25,7 @@ class GoogleImapAuth(object):
 
 if __name__ == '__main__':
     
-    # read username and passwd from console and authenticate
+    # read username and passwd from console or stdin pipeline and authenticate
     
     username = getpass.getpass( 'Username: ')
     password = getpass.getpass( 'Password: ')

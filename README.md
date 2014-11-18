@@ -9,6 +9,10 @@ It is designed to be used internally in Transparency International Georgia to se
 ## Usage
 
 * copy pwauth.py to /usr/local/bin/gmauth
+	* make sure the execute bit is on
+
+	chmod +x /usr/local/bin/gmauth
+
 * Configure Apache 
 
 	ServerName server.domain
@@ -32,4 +36,4 @@ It is designed to be used internally in Transparency International Georgia to se
 * mod_authnz_external
 * python 2.7
 * urllib2, imaplib
-* working Internet connection (there is no cache of any kind)
+* working Internet connection for the server (there is no cache of any kind)
