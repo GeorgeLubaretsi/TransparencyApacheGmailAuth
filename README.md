@@ -1,11 +1,12 @@
-* gmauth 
+# gmauth 
+***
 
 A simplistic program that authenticates apache2 using GMAIL IMAP.
 This program only allows the users in transparency.ge domain to login.
 It is designed to be used internally in Transparency International Georgia to secure access to files and other resources.
 
 
-** Usage
+## Usage
 
 * copy pwauth.py to /usr/local/bin/gmauth
 * Configure Apache 
@@ -26,7 +27,7 @@ It is designed to be used internally in Transparency International Georgia to se
 	  Require valid-user
 	</Directory>
 
-** requirements
+## requirements
 
 * mod_authnz_external
 * python 2.7
