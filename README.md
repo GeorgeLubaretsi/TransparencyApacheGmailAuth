@@ -21,7 +21,7 @@ It is designed to be used internally in Transparency International Georgia to se
 	<Directory /file/system/location>
 	  AllowOverride AuthConfig
 	  AuthType Basic
-	  AuthName BaraBara
+	  AuthName "Transparency International Georgia"
 	  AuthBasicProvider external
 	  AuthExternal gmauth
 	  Require valid-user
