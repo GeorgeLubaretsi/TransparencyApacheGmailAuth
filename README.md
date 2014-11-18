@@ -11,7 +11,7 @@ It is designed to be used internally in Transparency International Georgia to se
 * copy pwauth.py to /usr/local/bin/gmauth
 	* make sure the execute bit is on
 
-		chmod +x /usr/local/bin/gmauth
+			chmod +x /usr/local/bin/gmauth
 
 * Configure Apache 
 
