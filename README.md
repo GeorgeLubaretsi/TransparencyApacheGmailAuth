@@ -11,25 +11,25 @@ It is designed to be used internally in Transparency International Georgia to se
 * copy pwauth.py to /usr/local/bin/gmauth
 	* make sure the execute bit is on
 
-	chmod +x /usr/local/bin/gmauth
+		chmod +x /usr/local/bin/gmauth
 
 * Configure Apache 
 
-	ServerName server.domain
-
-	Alias /authenticated	/file/system/location
-
-	AddExternalAuth gmauth /usr/local/bin/gmauth
-	SetExternalAuthMethod gmauth pipe
-
-	<Directory /file/system/location>
-	  AllowOverride AuthConfig
-	  AuthType Basic
-	  AuthName "Transparency International Georgia"
-	  AuthBasicProvider external
-	  AuthExternal gmauth
-	  Require valid-user
-	</Directory>
+		ServerName server.domain
+	
+		Alias /authenticated	/file/system/location
+	
+		AddExternalAuth gmauth /usr/local/bin/gmauth
+		SetExternalAuthMethod gmauth pipe
+	
+		<Directory /file/system/location>
+		  AllowOverride AuthConfig
+		  AuthType Basic
+		  AuthName "Transparency International Georgia"
+		  AuthBasicProvider external
+		  AuthExternal gmauth
+		  Require valid-user
+		</Directory>
 
 ## requirements
 
