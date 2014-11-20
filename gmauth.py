@@ -11,7 +11,7 @@ class GoogleImapAuth(object):
     '''
     The class logs in to a gmail account to check the credentials and logs out in case of success
     '''
-    allowed_users_regex = ur'.*?@transparency\.ge'
+    allowed_users_regex = ur'.*?@transparency\.ge$'
     imap_server = 'imap.googlemail.com'
     imap_port = 993
     syslog_enabled = True
