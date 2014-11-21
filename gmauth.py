@@ -59,9 +59,6 @@ if __name__ == '__main__':
     auth = GoogleImapAuth()
     auth.configure()
     
-    print auth.syslog_enabled
-        
-        
     if not re.match( auth.allowed_users_regex, username):
         if auth.syslog_enabled:
             syslog.syslog( syslog.LOG_ERR, '[gmauth]: Forbidden user %s' % username)
