@@ -21,7 +21,7 @@ class GoogleImapAuth(object):
     os.path.dirname(os.path.realpath(__file__))
     
     def configure(self):
-        defaults_file = '/etc/defaults/gmauth'
+        defaults_file = '/etc/default/gmauth'
         if os.path.isfile( defaults_file):
             self.configuration_file = defaults_file
             
