@@ -6,6 +6,7 @@ Created on Nov 18, 2014
 @author: msuliga
 '''
 import imaplib, getpass, re, ConfigParser, os, syslog
+import pickle, hashlib, datetime
 
 class GoogleImapAuth(object):
     '''
@@ -20,7 +21,12 @@ class GoogleImapAuth(object):
     
     os.path.dirname(os.path.realpath(__file__))
     
+    cache_file = '/tmp/gmauth_cache'
+    pass_cache = {}
+    
+    
     def configure(self):
+        
         defaults_file = '/etc/default/gmauth'
         if os.path.isfile( defaults_file):
             self.configuration_file = defaults_file
@@ -33,16 +39,66 @@ class GoogleImapAuth(object):
         self.imap_port = config.get( 'gmauth', 'imap_port')
         self.syslog_enabled = True if config.get( 'gmauth', 'syslog_enabled') == 'True' else False
         
+        self.load_cache()
+    
+    def load_cache(self):
+        
+        if not os.path.isfile( self.cache_file):
+            return
+        
+        try: 
+            cache_file = open( self.cache_file, 'rb')
+            self.pass_cache = pickle.load( cache_file)
+            cache_file.close()
+        except IOError:
+            pass
+        
+    def save_cache(self):
+        
+        cache_file = open( self.cache_file, 'wb')
+        pickle.dump( self.pass_cache, cache_file)
+        cache_file.close()
     
     def authenticate(self, username_in, password_in):
+        
+        if self.pass_cache.has_key( username_in):
+            
+            # discard cache older than a day
+            date_hash = self.pass_cache[ username_in][1]
+            date_today = datetime.date.today()
+            
+            d_hash = datetime.datetime.strptime( date_hash, "%Y-%m-%d")
+            d_today = datetime.datetime.strptime( date_today, "%Y-%m-%d")
+            
+            date_diff = ( d_today - d_hash).days
+            
+            if date_diff > 1:
+                return self.authenticate_gmail(username_in, password_in)
+                
+            hash_pass = hashlib.md5( password_in).digest()
+            
+            if hash_pass == self.pass_cache[ username_in]:
+                syslog.syslog( syslog.LOG_INFO, '[gmauth]: Authenticated user: %s on %s' % (username_in, self.imap_server))
+                return True
+            else:
+                return self.authenticate_gmail(username_in, password_in)
+        else:
+            return self.authenticate_gmail(username_in, password_in)
+
+    def authenticate_gmail(self, username_in, password_in):
 
         connGoogle = imaplib.IMAP4_SSL( self.imap_server, self.imap_port)
         try:
             connGoogle.login( username_in, password_in)
             connGoogle.logout()
             response = True
+            # storing in cache
+            self.pass_cache[ username_in] = (hashlib.md5( password_in).digest(), datetime.date.today())
+            self.save_cache()
+        
             if self.syslog_enabled:
                 syslog.syslog( syslog.LOG_INFO, '[gmauth]: Authenticated user: %s on %s' % (username_in, self.imap_server))
+            
         except imaplib.IMAP4_SSL.error:
             response = False
             if self.syslog_enabled:
