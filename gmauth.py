@@ -21,7 +21,7 @@ class GoogleImapAuth(object):
     
     os.path.dirname(os.path.realpath(__file__))
     
-    cache_file = '/tmp/gmauth_cache'
+    cache_file = '/tmp/.gmauth_cache'
     pass_cache = {}
     
     
@@ -88,14 +88,18 @@ class GoogleImapAuth(object):
     def authenticate_gmail(self, username_in, password_in):
 
         connGoogle = imaplib.IMAP4_SSL( self.imap_server, self.imap_port)
-        try:
+        
+        if self.pass_cache.has_key( username_in):
             del self.pass_cache[ username_in]
+        
+        try:
+
             connGoogle.login( username_in, password_in)
             connGoogle.logout()
             response = True
             # storing in cache
             self.pass_cache[ username_in] = (hashlib.md5( password_in).digest(), datetime.date.today())
-            self.save_cache()
+ 
         
             if self.syslog_enabled:
                 syslog.syslog( syslog.LOG_INFO, '[gmauth]: Authenticated user: %s on %s' % (username_in, self.imap_server))
@@ -104,6 +108,8 @@ class GoogleImapAuth(object):
             response = False
             if self.syslog_enabled:
                 syslog.syslog( syslog.LOG_ERR, '[gmauth]: Failed to authenticate user: %s on %s' % (username_in, self.imap_server))
+        
+        self.save_cache()
         return response
 
 if __name__ == '__main__':
