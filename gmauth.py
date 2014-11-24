@@ -67,18 +67,18 @@ class GoogleImapAuth(object):
             date_hash = self.pass_cache[ username_in][1]
             date_today = datetime.date.today()
             
-            d_hash = datetime.datetime.strptime( date_hash, "%Y-%m-%d")
-            d_today = datetime.datetime.strptime( date_today, "%Y-%m-%d")
+            #d_hash = datetime.datetime.strptime( date_hash, "%Y-%m-%d")
+            #d_today = datetime.datetime.strptime( date_today, "%Y-%m-%d")
             
-            date_diff = ( d_today - d_hash).days
+            date_diff = ( date_today - date_hash).days
             
             if date_diff > 1:
                 return self.authenticate_gmail(username_in, password_in)
                 
             hash_pass = hashlib.md5( password_in).digest()
             
-            if hash_pass == self.pass_cache[ username_in]:
-                syslog.syslog( syslog.LOG_INFO, '[gmauth]: Authenticated user: %s on %s' % (username_in, self.imap_server))
+            if hash_pass == self.pass_cache[ username_in][0]:
+                syslog.syslog( syslog.LOG_INFO, '[gmauth]: Authenticated user: %s on %s' % (username_in, 'Auth Server'))
                 return True
             else:
                 return self.authenticate_gmail(username_in, password_in)
@@ -89,6 +89,7 @@ class GoogleImapAuth(object):
 
         connGoogle = imaplib.IMAP4_SSL( self.imap_server, self.imap_port)
         try:
+            del self.pass_cache[ username_in]
             connGoogle.login( username_in, password_in)
             connGoogle.logout()
             response = True
